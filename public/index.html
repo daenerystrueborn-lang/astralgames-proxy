@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+  <meta name="theme-color" content="#7C3AED"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <title>Astral of the Sun</title>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="apple-touch-icon" href="icons/icon-192.png"/>
+  <link rel="icon" type="image/jpeg" href="favicon.jpg"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css?v=1774090077"/>
+</head>
+<body>
+
+<div id="scroll-progress"></div>
+<div id="loading-screen">
+  <canvas id="ls-particles"></canvas><div class="ls-bg-art"></div>
+  <div class="ls-body">
+    <div class="ls-logo-wrap"><div class="ls-ring"></div><img src="icons/icon-192.png" class="ls-logo-img" alt="" onerror="this.style.display='none'"/></div>
+    <h1 class="ls-title">Astral of the Sun</h1>
+    <div class="ls-track"><div class="ls-bar" id="ls-bar"></div></div>
+    <p class="ls-hint" id="ls-hint">Awakening your power...</p>
+  </div>
+</div>
+
+<div id="login-wrap" style="display:none">
+  <div class="login-bg-art"></div>
+  <div class="login-blob"></div>
+
+  <div id="step-login" class="auth-step login-inner" style="display:flex">
+    <div class="login-heading-block">
+      <h2 class="login-heading">Login</h2>
+      <p class="login-sub">No account? <span>Use <code>!register</code> in WhatsApp first</span></p>
+    </div>
+    <div class="login-fields">
+      <div class="lf-row"><span class="lf-prefix">@</span><input id="username-field" class="lf-input" type="text" placeholder="Username" maxlength="30" onkeydown="if(event.key==='Enter')document.getElementById('password-field').focus()"/></div>
+      <div class="lf-row"><span class="lf-prefix">🔑</span><input id="password-field" class="lf-input" type="password" placeholder="Password" maxlength="64" onkeydown="if(event.key==='Enter')submitLogin()"/></div>
+    </div>
+    <p class="auth-error" style="display:none"></p>
+    <div class="login-btn-row">
+      <button id="btn-login" class="login-btn" onclick="submitLogin()">Login <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg></button>
+    </div>
+    <p class="login-hint">Set your username &amp; password with <code>!register</code> in WhatsApp &nbsp;·&nbsp; <span style="color:#9f67f5;cursor:pointer" onclick="showForgot()">Forgot password?</span></p>
+  </div>
+
+  <!-- Forgot password step -->
+  <div id="step-forgot" class="auth-step login-inner" style="display:none">
+    <div class="login-heading-block">
+      <h2 class="login-heading">Reset Password</h2>
+      <p class="login-sub">Type <code style="color:#9f67f5">!resetportal</code> in WhatsApp to get your code</p>
+    </div>
+    <div class="login-fields">
+      <div class="lf-row"><span class="lf-prefix">@</span><input id="reset-username" class="lf-input" type="text" placeholder="Your username" maxlength="30" onkeydown="if(event.key==='Enter')document.getElementById('reset-code').focus()"/></div>
+      <div class="lf-row"><span class="lf-prefix">#</span><input id="reset-code" class="lf-input" type="number" placeholder="6-digit code from WhatsApp" onkeydown="if(event.key==='Enter')document.getElementById('reset-newpass').focus()"/></div>
+      <div class="lf-row"><span class="lf-prefix">🔑</span><input id="reset-newpass" class="lf-input" type="password" placeholder="New password (min 6 chars)" maxlength="64" onkeydown="if(event.key==='Enter')document.getElementById('reset-confirm').focus()"/></div>
+      <div class="lf-row"><span class="lf-prefix">🔑</span><input id="reset-confirm" class="lf-input" type="password" placeholder="Confirm new password" maxlength="64" onkeydown="if(event.key==='Enter')submitReset()"/></div>
+    </div>
+    <p class="auth-error" style="display:none"></p>
+    <div class="login-btn-row">
+      <button id="btn-reset" class="login-btn" onclick="submitReset()">Reset Password ✓</button>
+    </div>
+    <p class="login-hint"><span style="color:#9f67f5;cursor:pointer" onclick="showLogin()">← Back to login</span></p>
+  </div>
+
+</div>
+
+
+<nav id="desktop-nav" style="display:none"></nav>
+<header id="topbar">
+  <button class="hamburger" onclick="openSidebar()"><span></span><span></span><span></span></button>
+  <span class="topbar-brand">Astral of the Sun</span>
+  <button class="topbar-btn" onclick="refreshData()"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>
+</header>
+
+<div id="sb-overlay" onclick="closeSidebar()"></div>
+<nav id="sidebar">
+  <div class="sb-head"><button class="sb-close" onclick="closeSidebar()">✕</button></div>
+  <ul class="sb-nav">
+    <li><a class="sb-link active" data-page="home"        onclick="navigate('home')">HOME</a></li>
+    <li><a class="sb-link"        data-page="leaderboard" onclick="navigate('leaderboard')">LEADERBOARD</a></li>
+    <li><a class="sb-link"        data-page="shop"        onclick="navigate('shop')">VAULT</a></li>
+    <li><a class="sb-link"        data-page="factions"    onclick="navigate('factions')">GUILDS</a></li>
+    <li><a class="sb-link"        data-page="premium"     onclick="navigate('premium')">PREMIUM</a></li>
+    <li><a class="sb-link"        data-page="terms"       onclick="navigate('terms')">TERMS &amp; CONDITIONS</a></li>
+  </ul>
+  <div class="sb-foot"><button class="sb-logout" onclick="handleLogout()">LOGOUT</button></div>
+</nav>
+
+<div id="app">
+  <div class="app-bg-orbs"><span></span><span></span><span></span></div>
+
+  <section id="page-home" class="page active">
+
+    <!-- HERO — full bleed, text overlay bottom-left like ARCHIVE_01 -->
+    <div class="profile-hero">
+      <div class="ph-cover-wrap">
+        <img id="cover-img" src="images/default-banner.png" class="ph-cover" onerror="this.src='images/default-banner.png'" alt=""/>
+        <div class="ph-cover-gradient"></div>
+        <!-- Hero overlay text -->
+        <div class="ph-hero-overlay">
+          <div class="ph-rank-row">
+            <span class="ph-rank-badge" id="hero-rank-badge">RANK —</span>
+            <span class="ph-id" id="hero-id-tag">ID: —</span>
+          </div>
+          <h2 class="ph-name" id="hero-name">—</h2>
+          <p class="ph-sub" id="hero-sub">—</p>
+          <p class="ph-title-text" id="hero-title-text"></p>
+        </div>
+        <button class="change-banner-btn" onclick="document.getElementById('banner-upload').click()">&#9998; Banner</button>
+        <input id="banner-upload" type="file" accept="image/*" style="display:none" onchange="handleImageUpload(this,'banner')"/>
+      </div>
+    </div>
+
+    <!-- All sections flow straight down, no tabs -->
+    <div class="page-inner" style="padding-bottom:0">
+
+      <!-- STATS + BARS -->
+      <div class="stats-row">
+        <div class="sr-card glass-card">
+          <div class="stats-inner-grid">
+            <div class="sg-cell"><span class="sr-val" id="hsr-level">—</span><span class="sr-key">Level</span></div>
+            <div class="sg-cell"><span class="sr-val" id="p-kills">—</span><span class="sr-key">Kills</span></div>
+            <div class="sg-cell"><span class="sr-val" id="pg-solars">—</span><span class="sr-key">Solars</span></div>
+            <div class="sg-cell"><span class="sr-val" id="p-prestige">—</span><span class="sr-key">Reborn</span></div>
+          </div>
+          <div style="height:1px;background:rgba(255,255,255,0.05);margin:0 16px"></div>
+          <div class="bars-section" style="padding-top:14px">
+            <div class="bar-row">
+              <span class="bar-lbl">Health (HP)</span>
+              <div class="bar-track"><div class="bar-fill hp-fill" id="hp-fill"></div></div>
+              <span class="bar-num" id="hp-num">100%</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-lbl" style="color:rgba(198,198,198,0.45)!important">Mana (MP)</span>
+              <div class="bar-track"><div class="bar-fill mp-fill" id="mp-fill"></div></div>
+              <span class="bar-num" id="mp-num">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROFILE DATA -->
+      <div class="info-grid glass-card" style="margin-top:12px">
+        <div class="info-card-header">
+          <span class="info-card-dot"></span>Profile Data
+        </div>
+        <div class="info-grid-cells">
+          <div class="ig-cell"><span class="ig-k">Class</span>    <span class="ig-v" id="p-class">—</span></div>
+          <div class="ig-cell"><span class="ig-k">Race</span>     <span class="ig-v" id="p-race">—</span></div>
+          <div class="ig-cell"><span class="ig-k">Affinity</span> <span class="ig-v" id="p-affinity">—</span></div>
+          <div class="ig-cell"><span class="ig-k">Guild</span>    <span class="ig-v" id="p-guild">—</span></div>
+        </div>
+        <div class="info-bottom">
+          <div class="ig-cell"><span class="ig-k">Region</span><span class="ig-v" id="p-region">—</span></div>
+          <div class="ig-cell" style="text-align:right"><span class="ig-k">Rank</span><span class="ig-v" id="p-rank">—</span></div>
+        </div>
+      </div>
+
+      <!-- EQUIPMENT -->
+      <div class="glass-card" style="margin:12px 16px 0">
+        <div class="info-card-header">Equipment</div>
+        <div class="equip-row">
+          <div class="eq-slot">
+            <div class="eq-ico" id="eq-weapon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/></svg>
+            </div>
+            <span>Weapon</span>
+          </div>
+          <div class="eq-slot">
+            <div class="eq-ico" id="eq-armor">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <span>Armor</span>
+          </div>
+          <div class="eq-slot">
+            <div class="eq-ico" id="eq-accessory">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+            </div>
+            <span>Accessory</span>
+          </div>
+          <div class="eq-slot">
+            <div class="eq-ico" id="eq-relic">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <span>Relic</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTIVE SKILLS -->
+      <div class="glass-card" style="margin:12px 16px 0">
+        <div class="info-card-header">Active Skills</div>
+        <div id="skills-list" class="list-stack">
+          <div class="empty-state">No skills yet</div>
+        </div>
+      </div>
+
+      <!-- COMBAT STATS -->
+      <div class="glass-card" style="margin:12px 16px 0">
+        <div class="info-card-header">Combat Stats</div>
+        <div class="combat-stats-grid" style="padding:0 12px 12px">
+          <div class="csg-cell"><div class="csg-k">STR</div><div class="csg-v" id="cs-str">—</div></div>
+          <div class="csg-cell"><div class="csg-k">AGI</div><div class="csg-v" id="cs-agi">—</div></div>
+          <div class="csg-cell"><div class="csg-k">INT</div><div class="csg-v" id="cs-int">—</div></div>
+          <div class="csg-cell"><div class="csg-k">DEF</div><div class="csg-v" id="cs-def">—</div></div>
+          <div class="csg-cell"><div class="csg-k">LCK</div><div class="csg-v" id="cs-lck">—</div></div>
+          <div class="csg-cell"><div class="csg-k">MAX HP</div><div class="csg-v" id="cs-hp">—</div></div>
+        </div>
+      </div>
+
+      <!-- ACHIEVEMENTS -->
+      <div class="glass-card" style="margin:12px 16px 0">
+        <div class="info-card-header">Achievements</div>
+        <div id="ach-card" style="padding:0 12px 12px"><div class="empty-state">No achievements yet</div></div>
+      </div>
+
+      <!-- LOGOUT -->
+      <div style="padding:20px 16px 8px">
+        <button onclick="handleLogout()" style="width:100%;background:none;border:1px solid rgba(255,100,100,0.25);color:rgba(255,100,100,0.7);border-radius:var(--r-full);padding:13px;font-family:var(--headline);font-size:11px;font-weight:700;letter-spacing:0.2em;cursor:pointer;transition:all 0.2s" onmouseover="this.style.borderColor='rgba(255,100,100,0.5)';this.style.color='rgba(255,100,100,1)'" onmouseout="this.style.borderColor='rgba(255,100,100,0.25)';this.style.color='rgba(255,100,100,0.7)'">LOGOUT</button>
+      </div>
+
+      <!-- INVENTORY (hidden section, kept for JS compat) -->
+      <div id="inv-grid" style="display:none"></div>
+      <!-- kept IDs for JS compat -->
+      <span id="pg-xp" style="display:none"></span>
+      <span id="p-floor" style="display:none"></span>
+      <span id="p-title" style="display:none"></span>
+      <span id="p-rank-2" style="display:none"></span>
+      <span id="pg-vault" style="display:none"></span>
+
+    </div><!-- end page-inner -->
+  </section>
+
+  <section id="page-profile" class="page">
+    <div class="page-inner"><div class="page-header"><h2>Profile</h2></div>
+    <p style="padding:16px;color:var(--t2)">Your profile is on the Home tab.</p>
+    <div style="padding:0 16px"><button class="pill-btn" onclick="navigate('home')">Go to Home</button></div></div>
+  </section>
+
+  <section id="page-leaderboard" class="page">
+    <div class="page-inner">
+      <div class="page-header"><h2>Leaderboard</h2></div>
+      <div class="tabs-row"><div class="tabs">
+        <button class="tab active" onclick="switchTab(this,'lb-lv')">Level</button>
+        <button class="tab"        onclick="switchTab(this,'lb-ki')">Kills</button>
+        <button class="tab"        onclick="switchTab(this,'lb-go')">Solars</button>
+      </div></div>
+      <div id="lb-lv" class="tab-pane active"><div id="lb-lv-list" class="lb-list"></div></div>
+      <div id="lb-ki" class="tab-pane"><div id="lb-ki-list" class="lb-list"></div></div>
+      <div id="lb-go" class="tab-pane"><div id="lb-go-list" class="lb-list"></div></div>
+    </div>
+  </section>
+
+  <section id="page-shop" class="page">
+    <div class="vault-page">
+      <div class="vault-filters" id="vault-filter-bar">
+        <button class="vf-tab active" onclick="filterVault(this,'weapon')">WEAPONS</button>
+        <button class="vf-tab" onclick="filterVault(this,'armor')">ARMOR</button>
+        <button class="vf-tab" onclick="filterVault(this,'accessory')">ACCESSORIES</button>
+        <button class="vf-tab" onclick="filterVault(this,'consumable')">CONSUMABLES</button>
+        <button class="vf-tab" onclick="filterVault(this,'egg')">EGGS</button>
+        <button class="vf-tab" onclick="filterVault(this,'material')">MATERIALS</button>
+        <button class="vf-tab" onclick="filterVault(this,'astral')">ASTRAL</button>
+      </div>
+      <div id="shop-grid" class="vault-list"></div>
+    </div>
+  </section>
+
+  <section id="page-cards" class="page">
+    <div class="page-inner"><div class="page-header"><h2>Cards</h2></div>
+    <div id="cards-grid" class="item-grid"><div class="empty-state">Cards drop from combat</div></div></div>
+  </section>
+
+  <section id="page-topup" class="page">
+    <div class="prem-page">
+      <div class="prem-header">
+        <h1 class="prem-title">Top Up</h1>
+        <p class="prem-subtitle">Purchase Astra Gems or Solar Gold. Send payment screenshot to the bot after ordering.</p>
+      </div>
+
+      <!-- PAYMENT INFO -->
+      <div class="tier-card" style="margin-bottom:12px">
+        <div class="tier-top">
+          <div><div class="tier-name">Payment Details</div><div class="tier-label">MONIEPOINT</div></div>
+          <div class="tier-ico">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          </div>
+        </div>
+        <div style="background:rgba(255,255,255,0.04);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;justify-content:space-between"><span style="font-family:var(--headline);font-size:9px;letter-spacing:0.2em;color:var(--t3)">ACCOUNT</span><span style="font-family:var(--headline);font-size:14px;font-weight:800;color:var(--white)">5197434428</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="font-family:var(--headline);font-size:9px;letter-spacing:0.2em;color:var(--t3)">NAME</span><span style="font-family:var(--body);font-size:13px;font-weight:600;color:var(--white)">Flora</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="font-family:var(--headline);font-size:9px;letter-spacing:0.2em;color:var(--t3)">BANK</span><span style="font-family:var(--body);font-size:13px;font-weight:600;color:var(--white)">Moniepoint</span></div>
+        </div>
+      </div>
+
+      <!-- GEM PACKS -->
+      <div class="guild-section-header" style="padding:0 4px 10px"><span class="guild-section-title">Astra Gems</span></div>
+      <div class="tier-card"><div class="tier-top"><div><div class="tier-name">Spark</div><div class="tier-label">50 GEMS</div></div><div class="tier-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 19 8 16 20 8 20 5 8 12 2"/></svg></div></div>
+        <div class="tier-price"><span class="tier-amount">&#8358;150</span></div>
+        <div class="tier-cmd-box"><span class="tier-cmd-label">SEND AFTER PAYMENT</span><span class="tier-cmd-code" onclick="openWA('!topup spark')">!topup spark</span></div>
+        <button class="tier-btn outline" onclick="openWA('!topup spark')">ORDER NOW</button></div>
+
+      <div class="tier-card"><div class="tier-top"><div><div class="tier-name">Flare</div><div class="tier-label">100 GEMS</div></div><div class="tier-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div></div>
+        <div class="tier-price"><span class="tier-amount">&#8358;300</span></div>
+        <div class="tier-cmd-box"><span class="tier-cmd-label">SEND AFTER PAYMENT</span><span class="tier-cmd-code" onclick="openWA('!topup flare')">!topup flare</span></div>
+        <button class="tier-btn outline" onclick="openWA('!topup flare')">ORDER NOW</button></div>
+
+      <div class="tier-card recommended"><div class="tier-recommended-badge">POPULAR</div><div class="tier-top"><div><div class="tier-name">Nova</div><div class="tier-label">500 GEMS</div></div><div class="tier-ico bright"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 19 8 16 20 8 20 5 8 12 2"/></svg></div></div>
+        <div class="tier-price"><span class="tier-amount">&#8358;1,000</span></div>
+        <div class="tier-cmd-box"><span class="tier-cmd-label">SEND AFTER PAYMENT</span><span class="tier-cmd-code" onclick="openWA('!topup nova')">!topup nova</span></div>
+        <button class="tier-btn solid" onclick="openWA('!topup nova')">ORDER NOW</button></div>
+
+      <div class="tier-card"><div class="tier-top"><div><div class="tier-name">Cosmic</div><div class="tier-label">1,300 GEMS</div></div><div class="tier-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div></div>
+        <div class="tier-price"><span class="tier-amount">&#8358;2,500</span></div>
+        <div class="tier-cmd-box"><span class="tier-cmd-label">SEND AFTER PAYMENT</span><span class="tier-cmd-code" onclick="openWA('!topup cosmic')">!topup cosmic</span></div>
+        <button class="tier-btn outline" onclick="openWA('!topup cosmic')">ORDER NOW</button></div>
+
+      <!-- GOLD PACKS -->
+      <div class="guild-section-header" style="padding:16px 4px 10px"><span class="guild-section-title">Solar Gold</span></div>
+
+      <div class="tier-card"><div class="tier-top"><div><div class="tier-name">Copper</div><div class="tier-label">100,000 GOLD</div></div><div class="tier-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div></div>
+        <div class="tier-price"><span class="tier-amount">&#8358;500</span></div>
+        <div class="tier-cmd-box"><span class="tier-cmd-label">SEND AFTER PAYMENT</span><span class="tier-cmd-code" onclick="openWA('!topup copper')">!topup copper</span></div>
+        <button class="tier-btn outline" onclick="openWA('!topup copper')">ORDER NOW</button></div>
+
+      <div class="tier-card recommended"><div class="tier-recommended-badge">BEST VALUE</div><div class="tier-top"><div><div class="tier-name">Crown</div><div class="tier-label">600,000 GOLD</div></div><div class="tier-ico bright"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20M5 20V10l7-7 7 7v10"/></svg></div></div>
+        <div class="tier-price"><span class="tier-amount">&#8358;2,000</span></div>
+        <div class="tier-cmd-box"><span class="tier-cmd-label">SEND AFTER PAYMENT</span><span class="tier-cmd-code" onclick="openWA('!topup crown')">!topup crown</span></div>
+        <button class="tier-btn solid" onclick="openWA('!topup crown')">ORDER NOW</button></div>
+
+      <div class="tier-card"><div class="tier-top"><div><div class="tier-name">Legendary</div><div class="tier-label">2,000,000 GOLD</div></div><div class="tier-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div></div>
+        <div class="tier-price"><span class="tier-amount">&#8358;5,000</span></div>
+        <div class="tier-cmd-box"><span class="tier-cmd-label">SEND AFTER PAYMENT</span><span class="tier-cmd-code" onclick="openWA('!topup legendary')">!topup legendary</span></div>
+        <button class="tier-btn outline" onclick="openWA('!topup legendary')">ORDER NOW</button></div>
+
+      <div class="prem-footer-note" style="margin-top:8px">
+        <p>After payment, DM the bot and send your screenshot with the command shown. Owner confirms within 24hrs.</p>
+      </div>
+    </div>
+  </section>
+
+    <section id="page-factions" class="page">
+    <div class="guild-page">
+
+      <!-- USER GUILD HERO -->
+      <div class="guild-hero glass-card" id="guild-hero">
+        <div class="gh-avatar">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="gh-rank-badge" id="gh-rank">RANK —</div>
+        <div class="gh-label">PRIMARY AFFILIATION</div>
+        <div class="gh-name" id="gh-name">—</div>
+        <div class="gh-tags" id="gh-tags">
+          <span class="gh-tag" id="gh-level-tag">LVL —</span>
+          <span class="gh-tag" id="gh-role-tag">MEMBER</span>
+        </div>
+      </div>
+
+      <!-- GUILD STATS -->
+      <div class="guild-stats-row" id="guild-stats-row">
+        <div class="gsr-cell">
+          <div class="gsr-val" id="gs-members">—</div>
+          <div class="gsr-key">Members</div>
+        </div>
+        <div class="gsr-cell">
+          <div class="gsr-val" id="gs-level">—</div>
+          <div class="gsr-key">Level</div>
+        </div>
+        <div class="gsr-cell">
+          <div class="gsr-val" id="gs-power">—</div>
+          <div class="gsr-key">Power</div>
+        </div>
+      </div>
+
+      <!-- TOP GUILDS -->
+      <div class="guild-section-header">
+        <span class="guild-section-title">TOP GUILDS</span>
+        <span class="guild-section-sub">REGIONAL LEADERBOARD</span>
+      </div>
+      <div id="factions-list" class="guild-lb-list"><div class="empty-state">Loading...</div></div>
+
+      <!-- RECENT ACTIVITY -->
+      <div class="guild-section-header" style="margin-top:8px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:rgba(255,255,255,0.3)"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span class="guild-section-title">RECENT ACTIVITY</span>
+        </div>
+      </div>
+      <div id="guild-activity" class="guild-activity-list">
+        <div class="empty-state">No recent activity</div>
+      </div>
+
+    </div>
+  </section>
+
+      <section id="page-premium" class="page">
+    <div class="prem-page">
+
+      <!-- TABS -->
+      <div class="prem-tabs">
+        <button class="prem-tab active" onclick="switchPremTab(this,'ptab-premium')">Premium</button>
+        <button class="prem-tab" onclick="switchPremTab(this,'ptab-topup')">Top-Up</button>
+      </div>
+
+      <!-- PREMIUM TAB -->
+      <div id="ptab-premium" class="prem-tab-pane active">
+        <div class="prem-header" style="padding:16px 4px 20px">
+          <h1 class="prem-title" style="font-size:26px">Select Your Plan</h1>
+          <p class="prem-subtitle">All plans unlock 1.5x EXP, Auto-Revive, Floor Jump &amp; extended inventory.</p>
+        </div>
+
+        <div class="tier-card">
+          <div class="tier-top">
+            <div><div class="tier-name">Free</div><div class="tier-label">INITIATE</div></div>
+            <div class="tier-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+          </div>
+          <div class="tier-price"><span class="tier-amount">FREE</span><span class="tier-period">/forever</span></div>
+          <ul class="tier-perks">
+            <li><span class="tp-dot dim"></span>Basic portal access</li>
+            <li><span class="tp-dot dim"></span>Standard activity logs</li>
+          </ul>
+          <button class="tier-btn outline" id="prem-status">CURRENT PLAN</button>
+        </div>
+
+        <div class="tier-card">
+          <div class="tier-top">
+            <div><div class="tier-name">Weekly</div><div class="tier-label">7 DAYS</div></div>
+            <div class="tier-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+          </div>
+          <div class="tier-price"><span class="tier-amount">&#8358;500</span><span class="tier-period">/week</span></div>
+          <ul class="tier-perks">
+            <li><span class="tp-dot dim"></span>1.5&#215; EXP &amp; Solars</li>
+            <li><span class="tp-dot dim"></span>Auto-Revive once per Rift</li>
+            <li><span class="tp-dot dim"></span>Extended inventory</li>
+          </ul>
+          <button class="tier-btn outline" data-cmd="!premium buy weekly" onclick="copyBuyCmd('!premium buy weekly')">BUY NOW</button>
+        </div>
+
+        <div class="tier-card recommended">
+          <div class="tier-recommended-badge">BEST VALUE</div>
+          <div class="tier-top">
+            <div><div class="tier-name">Monthly</div><div class="tier-label">30 DAYS</div></div>
+            <div class="tier-ico bright"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+          </div>
+          <div class="tier-price"><span class="tier-amount">&#8358;1,500</span><span class="tier-period">/month</span></div>
+          <ul class="tier-perks">
+            <li><span class="tp-dot bright"></span>All Weekly benefits</li>
+            <li><span class="tp-dot bright"></span>Floor Jump</li>
+            <li><span class="tp-dot bright"></span>1.5&#215; Stat Points</li>
+            <li><span class="tp-dot bright"></span>Custom profile titles</li>
+          </ul>
+          <button class="tier-btn solid" data-cmd="!premium buy monthly" onclick="copyBuyCmd('!premium buy monthly')">BUY NOW</button>
+        </div>
+
+        <div class="tier-card">
+          <div class="tier-top">
+            <div><div class="tier-name">2-Month</div><div class="tier-label">60 DAYS</div></div>
+            <div class="tier-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          </div>
+          <div class="tier-price"><span class="tier-amount">&#8358;2,500</span><span class="tier-period">/2 months</span></div>
+          <ul class="tier-perks">
+            <li><span class="tp-dot dim"></span>All Monthly benefits</li>
+            <li><span class="tp-dot dim"></span>Save &#8358;500</li>
+          </ul>
+          <button class="tier-btn outline" data-cmd="!premium buy bimonthly" onclick="copyBuyCmd('!premium buy bimonthly')">BUY NOW</button>
+        </div>
+
+        <div class="tier-card">
+          <div class="tier-top">
+            <div><div class="tier-name">3-Month</div><div class="tier-label">90 DAYS</div></div>
+            <div class="tier-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 21 12 17 16 21"/><line x1="12" y1="17" x2="12" y2="11"/><path d="M7 4H4a2 2 0 0 0-2 2v2a4 4 0 0 0 4 4h1"/><path d="M17 4h3a2 2 0 0 1 2 2v2a4 4 0 0 1-4 4h-1"/><rect x="7" y="2" width="10" height="9" rx="1"/></svg></div>
+          </div>
+          <div class="tier-price"><span class="tier-amount">&#8358;3,500</span><span class="tier-period">/3 months</span></div>
+          <ul class="tier-perks">
+            <li><span class="tp-dot dim"></span>All Monthly benefits</li>
+            <li><span class="tp-dot dim"></span>Save &#8358;1,000</li>
+            <li><span class="tp-dot dim"></span>Global guild bonuses</li>
+          </ul>
+          <button class="tier-btn outline" data-cmd="!premium buy quarterly" onclick="copyBuyCmd('!premium buy quarterly')">BUY NOW</button>
+        </div>
+
+        <div class="tier-card">
+          <div class="tier-top">
+            <div><div class="tier-name">Yearly</div><div class="tier-label">365 DAYS</div></div>
+            <div class="tier-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          </div>
+          <div class="tier-price"><span class="tier-amount">&#8358;10,000</span><span class="tier-period">/year</span></div>
+          <ul class="tier-perks">
+            <li><span class="tp-dot dim"></span>All Monthly benefits</li>
+            <li><span class="tp-dot dim"></span>Save &#8358;8,000</li>
+          </ul>
+          <button class="tier-btn outline" data-cmd="!premium buy yearly" onclick="copyBuyCmd('!premium buy yearly')">BUY NOW</button>
+        </div>
+
+        <div class="prem-footer-note">
+          <p>Send the command to the bot in WhatsApp DM. The bot will guide you through payment.</p>
+          <div class="prem-footer-links">
+            <span onclick="navigate('terms')" style="cursor:pointer;text-decoration:underline">TERMS OF SERVICE</span>
+            <span onclick="navigate('terms')" style="cursor:pointer;text-decoration:underline">PRIVACY PROTOCOL</span>
+            <span onclick="navigate('terms')" style="cursor:pointer;text-decoration:underline">REFUND POLICY</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOPUP TAB -->
+      <div id="ptab-topup" class="prem-tab-pane">
+        <div class="prem-header" style="padding:16px 4px 20px">
+          <h1 class="prem-title" style="font-size:26px">Top-Up</h1>
+          <p class="prem-subtitle">Purchase Solars or Astra gems directly for your account.</p>
+        </div>
+
+        <!-- GOLD SUB-TABS -->
+        <div class="prem-tabs" style="margin-bottom:16px">
+          <button class="prem-tab active" onclick="switchTopupTab(this,'ttab-gold')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:5px"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>Solars
+          </button>
+          <button class="prem-tab" onclick="switchTopupTab(this,'ttab-gems')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:5px"><polygon points="12 2 19 8 16 20 8 20 5 8 12 2"/></svg>Astra Gems
+          </button>
+        </div>
+
+        <!-- SOLARS -->
+        <div id="ttab-gold" class="topup-tab-pane active">
+          <div class="topup-grid">
+            <div class="topup-card"><div class="topup-amount">5,000</div><div class="topup-label">Solars</div><div class="topup-price">&#8358;200</div><button class="topup-btn" onclick="copyBuyCmd('!topup gold 5000')">BUY NOW</button></div>
+            <div class="topup-card"><div class="topup-amount">10,000</div><div class="topup-label">Solars</div><div class="topup-price">&#8358;350</div><button class="topup-btn" onclick="copyBuyCmd('!topup gold 10000')">BUY NOW</button></div>
+            <div class="topup-card popular"><div class="topup-badge">POPULAR</div><div class="topup-amount">25,000</div><div class="topup-label">Solars</div><div class="topup-price">&#8358;800</div><button class="topup-btn solid" onclick="copyBuyCmd('!topup gold 25000')">BUY NOW</button></div>
+            <div class="topup-card"><div class="topup-amount">50,000</div><div class="topup-label">Solars</div><div class="topup-price">&#8358;1,500</div><button class="topup-btn" onclick="copyBuyCmd('!topup gold 50000')">BUY NOW</button></div>
+            <div class="topup-card"><div class="topup-amount">100,000</div><div class="topup-label">Solars</div><div class="topup-price">&#8358;2,800</div><button class="topup-btn" onclick="copyBuyCmd('!topup gold 100000')">BUY NOW</button></div>
+            <div class="topup-card"><div class="topup-amount">500,000</div><div class="topup-label">Solars</div><div class="topup-price">&#8358;12,000</div><button class="topup-btn" onclick="copyBuyCmd('!topup gold 500000')">BUY NOW</button></div>
+          </div>
+        </div>
+
+        <!-- ASTRA GEMS -->
+        <div id="ttab-gems" class="topup-tab-pane">
+          <div class="topup-grid">
+            <div class="topup-card"><div class="topup-amount">500</div><div class="topup-label">Astra</div><div class="topup-price">&#8358;300</div><button class="topup-btn" onclick="copyBuyCmd('!topup gems 500')">BUY NOW</button></div>
+            <div class="topup-card"><div class="topup-amount">1,000</div><div class="topup-label">Astra</div><div class="topup-price">&#8358;550</div><button class="topup-btn" onclick="copyBuyCmd('!topup gems 1000')">BUY NOW</button></div>
+            <div class="topup-card popular"><div class="topup-badge">POPULAR</div><div class="topup-amount">2,600</div><div class="topup-label">Astra</div><div class="topup-price">&#8358;1,200</div><button class="topup-btn solid" onclick="copyBuyCmd('!topup gems 2600')">BUY NOW</button></div>
+            <div class="topup-card"><div class="topup-amount">5,000</div><div class="topup-label">Astra</div><div class="topup-price">&#8358;2,200</div><button class="topup-btn" onclick="copyBuyCmd('!topup gems 5000')">BUY NOW</button></div>
+            <div class="topup-card"><div class="topup-amount">10,000</div><div class="topup-label">Astra</div><div class="topup-price">&#8358;4,000</div><button class="topup-btn" onclick="copyBuyCmd('!topup gems 10000')">BUY NOW</button></div>
+            <div class="topup-card"><div class="topup-amount">25,000</div><div class="topup-label">Astra</div><div class="topup-price">&#8358;9,000</div><button class="topup-btn" onclick="copyBuyCmd('!topup gems 25000')">BUY NOW</button></div>
+          </div>
+        </div>
+
+        <p style="font-family:var(--body);font-size:11px;color:var(--t3);text-align:center;padding:16px 0 8px">Send the command to the bot in WhatsApp DM to complete purchase.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- TERMS PAGE -->
+  <section id="page-terms" class="page">
+    <div class="terms-page">
+      <div class="terms-header">
+        <button class="terms-back" onclick="history.back()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <h1 class="terms-title">Terms &amp; Policies</h1>
+      </div>
+
+      <div class="terms-tabs">
+        <button class="terms-tab active" onclick="switchTermsTab(this,'tt-tos')">Terms</button>
+        <button class="terms-tab" onclick="switchTermsTab(this,'tt-privacy')">Privacy</button>
+        <button class="terms-tab" onclick="switchTermsTab(this,'tt-refund')">Refunds</button>
+      </div>
+
+      <div id="tt-tos" class="terms-pane active">
+        <div class="terms-section"><div class="terms-section-title">1. Acceptance of Terms</div><p>By accessing or using the Astral of the Sun portal and WhatsApp bot, you agree to be bound by these Terms of Service. If you do not agree to these terms, you may not use the service.</p></div>
+        <div class="terms-section"><div class="terms-section-title">2. Use of Service</div><p>Astral of the Sun is an RPG game accessible via WhatsApp. The portal is a companion interface for viewing your game profile, purchasing items, and managing your account. You must be at least 13 years old to use this service.</p></div>
+        <div class="terms-section"><div class="terms-section-title">3. Account Responsibility</div><p>You are responsible for maintaining the confidentiality of your account credentials. Any activity performed through your account is your responsibility. Report unauthorized access immediately via WhatsApp.</p></div>
+        <div class="terms-section"><div class="terms-section-title">4. Purchases &amp; Payments</div><p>All purchases are final unless covered by our Refund Policy. Prices are listed in Nigerian Naira (₦) and are subject to change. In-game currency (Solars, Astra) has no real-world monetary value and cannot be exchanged for cash.</p></div>
+        <div class="terms-section"><div class="terms-section-title">5. Prohibited Conduct</div><p>You may not exploit bugs or glitches, use automated bots or scripts, harass other players, or attempt to manipulate the game economy. Violations may result in permanent account suspension without refund.</p></div>
+        <div class="terms-section"><div class="terms-section-title">6. Service Availability</div><p>We do not guarantee uninterrupted access to the service. Maintenance windows, updates, or technical issues may cause temporary downtime. We are not liable for any loss resulting from service interruptions.</p></div>
+        <div class="terms-section"><div class="terms-section-title">7. Modifications</div><p>We reserve the right to modify these terms at any time. Continued use of the service after changes constitutes acceptance of the new terms.</p></div>
+        <div class="terms-section"><div class="terms-section-title">8. Contact</div><p>For any questions regarding these terms, contact us directly via WhatsApp using the bot number.</p></div>
+      </div>
+
+      <div id="tt-privacy" class="terms-pane">
+        <div class="terms-section"><div class="terms-section-title">1. Information We Collect</div><p>We collect your WhatsApp phone number, username, and game activity data (level, kills, inventory, transactions). We do not collect sensitive personal information beyond what is necessary to operate the game.</p></div>
+        <div class="terms-section"><div class="terms-section-title">2. How We Use Your Data</div><p>Your data is used exclusively to operate the game, process purchases, display your profile, and maintain leaderboards. We do not sell, rent, or share your data with third parties.</p></div>
+        <div class="terms-section"><div class="terms-section-title">3. Data Storage</div><p>Game data is stored on our secured servers. Payment transactions are handled via WhatsApp direct message and do not involve automated payment processors that store card details.</p></div>
+        <div class="terms-section"><div class="terms-section-title">4. Data Retention</div><p>Your account data is retained as long as your account is active. You may request deletion of your account and associated data by contacting us via WhatsApp.</p></div>
+        <div class="terms-section"><div class="terms-section-title">5. Security</div><p>We implement reasonable security measures to protect your data. However, no system is completely secure. Use a strong, unique password for your portal account.</p></div>
+        <div class="terms-section"><div class="terms-section-title">6. Children&#39;s Privacy</div><p>We do not knowingly collect data from users under 13. If we become aware of such collection, we will delete the data promptly.</p></div>
+      </div>
+
+      <div id="tt-refund" class="terms-pane">
+        <div class="terms-section"><div class="terms-section-title">1. Premium Subscriptions</div><p>Premium plan purchases are non-refundable once activated. If you experience a technical issue that prevented your premium from being applied, contact us within 48 hours via WhatsApp with proof of payment.</p></div>
+        <div class="terms-section"><div class="terms-section-title">2. Top-Up Purchases</div><p>Solar and Astra gem top-ups are non-refundable once credited to your account. If a top-up was not credited after payment, contact us within 24 hours with your payment receipt.</p></div>
+        <div class="terms-section"><div class="terms-section-title">3. Duplicate Purchases</div><p>If you accidentally made a duplicate purchase, contact us within 12 hours. Duplicate purchases may be eligible for a one-time refund or account credit at our discretion.</p></div>
+        <div class="terms-section"><div class="terms-section-title">4. Account Suspensions</div><p>Accounts suspended for violations of our Terms of Service are not eligible for refunds of any purchases made prior to suspension.</p></div>
+        <div class="terms-section"><div class="terms-section-title">5. How to Request</div><p>Send a WhatsApp DM to the bot with your username, the purchase in question, date of purchase, and reason for the request. We aim to respond within 48 hours.</p></div>
+        <div class="terms-section"><div class="terms-section-title">6. Service Closure</div><p>In the unlikely event that the service permanently closes, we will provide at least 30 days notice and consider pro-rated refunds for active premium subscriptions.</p></div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<nav id="bottom-nav">
+  <button class="bn active" data-page="home"        onclick="navigate('home')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><small>Home</small></button>
+  <button class="bn"        data-page="leaderboard" onclick="navigate('leaderboard')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><small>Stats</small></button>
+  <button class="bn" data-page="shop"     onclick="navigate('shop')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><small>Vault</small></button>
+  <button class="bn"        data-page="premium"     onclick="navigate('premium')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><small>Premium</small></button>
+  <button class="bn"        data-page="factions"    onclick="navigate('factions')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><small>Guilds</small></button>
+</nav>
+
+<div id="toast" class="toast"></div>
+<script src="catalog.js?v=1774090077"></script>
+<script src="icons.js?v=1774090077"></script>
+<script src="app.js?v=1774090077"></script>
+</body>
+</html>
