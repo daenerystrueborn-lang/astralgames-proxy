@@ -654,25 +654,36 @@ async function loadFactions() {
     const e = el('factions-list'); if(!e) return
     const guilds = (d||[]).sort((a,b)=>(b.power||b.totalPower||0)-(a.power||a.totalPower||0))
     if(!guilds.length){ e.innerHTML=`<div class="empty-state">No guilds yet</div>`; return }
+    const maxPower = guilds[0] ? (guilds[0].power||guilds[0].totalPower||1) : 1
     e.innerHTML = guilds.slice(0,10).map((g,i)=>{
       const memCount = (g.members||[]).length || g.memberCount || 0
       const rank = g.rank||'S'
       const power = fmtPower(g.power||g.totalPower||0)
       const ico = guildRankIcon(i)
       const num = String(i+1).padStart(2,'0')
+      const pct = Math.round(((g.power||g.totalPower||0) / maxPower) * 100)
       return `<div class="glb-item ${i<3?'glb-top':''}">
-        <span class="glb-num">${num}</span>
-        <div class="glb-ico ${i===0?'glb-ico-active':''}">${ico}</div>
-        <div class="glb-info">
-          <div class="glb-name">${g.name||'Unknown'}</div>
-          <div class="glb-sub">RANK ${rank} &bull; ${memCount} MEMBERS</div>
+        <div class="glb-item-inner">
+          <span class="glb-num">${num}</span>
+          <div class="glb-ico ${i===0?'glb-ico-active':''}">${ico}</div>
+          <div class="glb-info">
+            <div class="glb-name">${g.name||'Unknown'}</div>
+            <div class="glb-sub">RANK ${rank} &bull; ${memCount} MEMBERS</div>
+          </div>
+          <div class="glb-right">
+            <div class="glb-power">${power}</div>
+            <div class="glb-pwr-label">PWR</div>
+          </div>
         </div>
-        <div class="glb-right">
-          <div class="glb-power">${power}</div>
-          <div class="glb-pwr-label">PWR</div>
-        </div>
+        <div class="glb-power-bar-wrap"><div class="glb-power-bar" style="width:0%" data-pct="${pct}"></div></div>
       </div>`
     }).join('')
+    // Animate power bars in
+    setTimeout(() => {
+      e.querySelectorAll('.glb-power-bar').forEach(bar => {
+        bar.style.width = (bar.dataset.pct || 0) + '%'
+      })
+    }, 120)
 
     // populate user guild hero if player data is available
     // Populate guild hero card
