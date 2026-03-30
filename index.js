@@ -19,7 +19,7 @@ app.options("*", (req, res) => {
 app.use(
   "/api",
   createProxyMiddleware({
-    target: "http://217.154.201.164:8748",
+    target: "http://194.58.66.199:7202",
     changeOrigin: true,
     proxyTimeout: 25000,   // 25s — under Vercel's 30s maxDuration
     timeout: 25000,
