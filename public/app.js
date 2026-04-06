@@ -266,7 +266,7 @@ async function loadUserById(id) {
   if (!d?.name) throw new Error('Player not found')
   currentUser = d
   render(d)
-  hideLogin()
+  hideAuth()
 }
 
 async function refreshData() {
@@ -292,7 +292,6 @@ function render(p) {
   set('hero-name',       p.name || '—')
   set('hero-sub',        `${cap(p.class||'Warrior')} · Lv ${p.level||1}`)
   set('hero-title-text', p.equippedTitle || '')
-  set('hero-number',     p.id ? `+${p.id}` : '')
   set('hsr-level',       p.level || 1)
 
   set('pg-solars', fmtGold(p.gold))
@@ -317,6 +316,8 @@ function render(p) {
   const stripEmoji = s => String(s||'').replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{FE00}-\u{FEFF}\u{1F300}-\u{1F9FF}\u{2700}-\u{27BF}\u{1FA00}-\u{1FFFF}]/gu,'').replace(/[^\x20-\x7E\u00C0-\u024F]/g,'').trim()
   set('p-rank',   stripEmoji(p.rank)||'—')
   set('p-region', stripEmoji(p.location)||'—')
+  set('hero-rank-badge', 'RANK ' + (stripEmoji(p.rank) || '—'))
+  set('hero-id-tag',     p.id ? 'ID: ' + p.id : 'ID: —')
   set('p-kills',    fmt(p.kills||0))
   set('p-floor',    p.dungeonFloor||1)
   set('p-prestige', p.prestige?(p.isKami?'Ascendant':'Reborn '+p.prestige):'None')
@@ -1016,11 +1017,7 @@ function initDesktopNav() {
     a.className = 'dn-link' + (p.id === 'home' ? ' active' : '')
     a.dataset.page = p.id
     a.textContent = p.label
-    a.onclick = () => {
-      navigate(p.id)
-      document.querySelectorAll('.dn-link[data-page]').forEach(l => l.classList.remove('active'))
-      a.classList.add('active')
-    }
+    a.onclick = () => window.navigate(p.id)
     linksEl.appendChild(a)
   })
 }
