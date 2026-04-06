@@ -115,6 +115,14 @@
         <button class="change-banner-btn" onclick="document.getElementById('banner-upload').click()">&#9998; Banner</button>
         <input id="banner-upload" type="file" accept="image/*" style="display:none" onchange="handleImageUpload(this,'banner')"/>
       </div>
+      <!-- Avatar floats below the cover -->
+      <div class="ph-avatar-wrap">
+        <div class="ph-avatar-ring" onclick="document.getElementById('pfp-upload').click()" title="Change avatar">
+          <img id="avatar-img" src="images/default-pfp.png" class="ph-avatar-img" onerror="this.src='images/default-pfp.png'" alt="Avatar"/>
+          <div class="ph-avatar-edit">&#9998;</div>
+        </div>
+        <input id="pfp-upload" type="file" accept="image/*" style="display:none" onchange="handleImageUpload(this,'pfp')"/>
+      </div>
     </div>
 
     <!-- All sections flow straight down, no tabs -->
