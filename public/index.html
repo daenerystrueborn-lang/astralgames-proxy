@@ -75,15 +75,15 @@
     </div>
   </div>
 
-  <!-- RIGHT PANEL — form side -->
-  <div class="login-right-panel">
+  <!-- FORM PANEL — visible on both mobile and desktop -->
+  <div class="login-form-panel">
     <div class="login-right-brand">
       <img src="icons/icon-192.png" onerror="this.style.display='none'" alt=""/>
       <span>Astral of the Sun</span>
     </div>
 
     <!-- LOGIN step -->
-    <div id="step-login" class="auth-step login-inner" style="display:flex">
+    <div id="step-login" class="auth-step" style="display:flex">
       <div class="auth-card">
         <div class="login-heading-block">
           <h2 class="login-heading">Welcome Back</h2>
@@ -102,7 +102,7 @@
     </div>
 
     <!-- REGISTER step -->
-    <div id="step-register" class="auth-step login-inner" style="display:none">
+    <div id="step-register" class="auth-step" style="display:none">
       <div class="auth-card">
         <div class="login-heading-block">
           <h2 class="login-heading">Create Account</h2>
@@ -122,7 +122,7 @@
     </div>
 
     <!-- RESET step -->
-    <div id="step-forgot" class="auth-step login-inner" style="display:none">
+    <div id="step-forgot" class="auth-step" style="display:none">
       <div class="auth-card">
         <div class="login-heading-block">
           <h2 class="login-heading">Reset Password</h2>
@@ -299,7 +299,7 @@
 
       <!-- LOGOUT -->
       <div style="padding:20px 16px 8px">
-        <button onclick="handleLogout()" style="width:100%;background:none;border:1px solid rgba(255,100,100,0.25);color:rgba(255,100,100,0.7);border-radius:var(--r-full);padding:13px;font-family:var(--headline);font-size:11px;font-weight:700;letter-spacing:0.2em;cursor:pointer;transition:all 0.2s" onmouseover="this.style.borderColor='rgba(255,100,100,0.5)';this.style.color='rgba(255,100,100,1)'" onmouseout="this.style.borderColor='rgba(255,100,100,0.25)';this.style.color='rgba(255,100,100,0.7)'">LOGOUT</button>
+        <button onclick="handleLogout()" style="width:100%;background:none;border:1px solid rgba(255,100,100,0.25);color:rgba(255,100,100,0.7);border-radius:var(--r-full);padding:13px;font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:0.2em;cursor:pointer;transition:all 0.2s" onmouseover="this.style.borderColor='rgba(255,100,100,0.5)';this.style.color='rgba(255,100,100,1)'" onmouseout="this.style.borderColor='rgba(255,100,100,0.25)';this.style.color='rgba(255,100,100,0.7)'">LOGOUT</button>
       </div>
 
       <!-- INVENTORY (hidden section, kept for JS compat) -->
@@ -370,9 +370,9 @@
           </div>
         </div>
         <div style="background:rgba(255,255,255,0.04);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px">
-          <div style="display:flex;justify-content:space-between"><span style="font-family:var(--headline);font-size:9px;letter-spacing:0.2em;color:var(--t3)">ACCOUNT</span><span style="font-family:var(--headline);font-size:14px;font-weight:800;color:var(--white)">5197434428</span></div>
-          <div style="display:flex;justify-content:space-between"><span style="font-family:var(--headline);font-size:9px;letter-spacing:0.2em;color:var(--t3)">NAME</span><span style="font-family:var(--body);font-size:13px;font-weight:600;color:var(--white)">Flora</span></div>
-          <div style="display:flex;justify-content:space-between"><span style="font-family:var(--headline);font-size:9px;letter-spacing:0.2em;color:var(--t3)">BANK</span><span style="font-family:var(--body);font-size:13px;font-weight:600;color:var(--white)">Moniepoint</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="font-family:var(--display);font-size:9px;letter-spacing:0.2em;color:var(--t3)">ACCOUNT</span><span style="font-family:var(--display);font-size:14px;font-weight:800;color:var(--white)">5197434428</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="font-family:var(--display);font-size:9px;letter-spacing:0.2em;color:var(--t3)">NAME</span><span style="font-family:var(--body);font-size:13px;font-weight:600;color:var(--white)">Flora</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="font-family:var(--display);font-size:9px;letter-spacing:0.2em;color:var(--t3)">BANK</span><span style="font-family:var(--body);font-size:13px;font-weight:600;color:var(--white)">Moniepoint</span></div>
         </div>
       </div>
 
