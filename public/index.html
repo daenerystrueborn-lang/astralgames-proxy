@@ -19,6 +19,20 @@
 <body>
 
 <!-- Liquid Glass SVG Filter -->
+<div id="electric-card-filters" aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none;z-index:-1">
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+    <defs>
+      <filter id="turbulent-displace" colorInterpolationFilters="sRGB" x="-20%" y="-20%" width="140%" height="140%">
+        <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise1" seed="1"/>
+        <feOffset in="noise1" dx="0" dy="0" result="offsetNoise1"><animate attributeName="dy" values="700; 0" dur="6s" repeatCount="indefinite" calcMode="linear"/></feOffset>
+        <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise2" seed="2"/>
+        <feOffset in="noise2" dx="0" dy="0" result="offsetNoise2"><animate attributeName="dx" values="490; 0" dur="6s" repeatCount="indefinite" calcMode="linear"/></feOffset>
+        <feBlend in="offsetNoise1" in2="offsetNoise2" mode="color-dodge" result="combinedNoise"/>
+        <feDisplacementMap in="SourceGraphic" in2="combinedNoise" scale="30" xChannelSelector="R" yChannelSelector="B"/>
+      </filter>
+    </defs>
+  </svg>
+</div>
 <div id="liquid-glass-filters" aria-hidden="true">
   <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
     <defs>
@@ -49,9 +63,15 @@
 
 <div id="scroll-progress"></div>
 <div id="loading-screen">
-  <canvas id="ls-particles"></canvas><div class="ls-bg-art"></div>
-  <div class="ls-body">
-    <div class="ls-logo-wrap"><div class="ls-ring"></div><img src="icons/icon-192.png" class="ls-logo-img" alt="" onerror="this.style.display='none'"/></div>
+  <canvas id="ls-particles" style="display:none"></canvas>
+  <div class="ls-bg-art" style="display:none"></div>
+  <!-- Cyan cube loader -->
+  <div class="ls-cube-wrap">
+    <div class="ls-cube-box">
+      <div class="ls-cube"></div>
+    </div>
+  </div>
+  <div class="ls-title-wrap">
     <h1 class="ls-title">Astral of the Sun</h1>
     <div class="ls-track"><div class="ls-bar" id="ls-bar"></div></div>
     <p class="ls-hint" id="ls-hint">Awakening your power...</p>
@@ -95,7 +115,7 @@
         </div>
         <p class="auth-error" style="display:none"></p>
         <div class="login-btn-row">
-          <button id="btn-login" class="login-btn" onclick="submitLogin()">Enter the Realm <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg></button>
+          <button id="btn-login" class="login-btn" onclick="submitLogin()"><div class="btn-liquid"></div>Enter the Realm <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg></button>
         </div>
         <p class="login-hint">Register with your WhatsApp number &nbsp;·&nbsp; <span style="color:rgba(160,120,255,0.8);cursor:pointer" onclick="showForgot()">Forgot password?</span></p>
       </div>
@@ -115,7 +135,7 @@
         </div>
         <p class="auth-error" style="display:none"></p>
         <div class="login-btn-row">
-          <button id="btn-register" class="login-btn" onclick="submitRegister()">Create Account ⚔️</button>
+          <button id="btn-register" class="login-btn" onclick="submitRegister()"><div class="btn-liquid"></div>Create Account ⚔️</button>
         </div>
         <p class="login-hint"><span style="color:rgba(160,120,255,0.8);cursor:pointer" onclick="showLogin()">← Back to login</span></p>
       </div>
@@ -136,7 +156,7 @@
         </div>
         <p class="auth-error" style="display:none"></p>
         <div class="login-btn-row">
-          <button id="btn-reset" class="login-btn" onclick="submitReset()">Reset Password ✓</button>
+          <button id="btn-reset" class="login-btn" onclick="submitReset()"><div class="btn-liquid"></div>Reset Password ✓</button>
         </div>
         <p class="login-hint"><span style="color:rgba(160,120,255,0.8);cursor:pointer" onclick="showLogin()">← Back to login</span></p>
       </div>
